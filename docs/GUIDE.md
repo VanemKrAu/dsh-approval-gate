@@ -16,10 +16,10 @@ DENY（不可逆危险词）→ 白名单（确定性规则）→ denyRules（�
 - **④ flash 判定**（仅越界请求）：输出 `SAFE` 或 `RISKY:<category>`
   - `SAFE` → 自动放行
   - 硬风险类别（`deletion` 删除 / `credential` 凭据 / `remote` 远程生产 / `system` 系统路径 / `bulk` 批量不可回补）→ **直接转人工**（必须人工确认，不计数、不学习）
-  - `neutral`（中立，无硬风险特征）→ **人工确认制**：前 N-1 次转人工确认，之后进入阈值状态
-- **⑤ 学习沉淀**（neutral 类别，N=3 时：前 2 次人工确认，之后进入阈值状态）
+  - `neutral`（中立，无硬风险特征）→ **人工确认制**：前 N 次转人工确认，之后进入阈值状态
+- **⑤ 学习沉淀**（neutral 类别，N=3 时：前 3 次人工确认，第 4 次起进入阈值状态）
   - 阈值前：一律人工确认，**批准** → 计数 +1 并记录**操作样本**（指纹 + 操作背景/目的）；**拒绝** → 升级 denyRules
-  - 阈值后（计数 ≥ N-1）三种分流：
+  - 阈值后（计数 ≥ N）三种分流：
     1. **指纹确定性命中**（本次操作在确认样本中）→ 自动放行 + 沉淀 `{tool, mode, category, contains}` 规则
     2. **指纹未命中但有确认样本** → 把本次操作的背景/目的 + 用户确认过的样本交给 flash **第三方同类验证**：判 `SAME`（与已确认样本同类）→ 自动放行（有指纹则沉淀）；判 `DIFFERENT`/验证失败 → 人工确认
     3. **无确认样本** → 人工确认
@@ -29,11 +29,15 @@ DENY（不可逆危险词）→ 白名单（确定性规则）→ denyRules（�
 
 ## 安装
 
-```sh
-# 方式一：npm 安装（推荐）
-dsh plugin --profile web add dsh-approval-gate
+> **本复刻版本**：请使用下面的命令安装。上游 `0.5.2` 在 DSH `0.1.5-rc.2` 上存在门控整体失效问题（详见 [README](../README.md)）。
 
-# 方式二：GitHub 安装
+```sh
+dsh plugin --profile web add "github:VanemKrAu/dsh-approval-gate"
+```
+
+若确需从上游安装（**不推荐**——门控不会生效）：
+
+```sh
 dsh plugin --profile web add "github:moon09300731/dsh-approval-gate#main"
 ```
 
@@ -100,7 +104,7 @@ dsh plugin --profile web add "github:moon09300731/dsh-approval-gate#main"
 - `allowRules`：每条规则 `tool` / `mode` / `category` / `contains` 均满足才放行（缺省表示任意）。学习沉淀的规则也会写入这里
 - `denyRules`：用户裁决拒绝后自动写入，命中即转人工（不学习）
 - `hardCategories`：flash 判 RISKY 且命中这些类别 → 直接转人工（不计数、不学习）
-- `riskyThreshold`：中立类别的人工确认阈值（默认 3）——同一「工具+模式+类别」被人工确认 N-1 次后，第 N 次起自动放行并沉淀规则
+- `riskyThreshold`：中立类别的人工确认阈值（默认 3）——同一「工具+模式+类别」被人工确认满 N 次后，第 N+1 次起自动放行并沉淀规则
 - `judgeTimeoutMs`：单次 flash 判断超时（默认 20000ms，超时自动重试 1 次，仍超时转人工）
 
 ## 使用

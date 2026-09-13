@@ -16,10 +16,10 @@ DENY (irreversible keywords) → allowlist (deterministic rules) → denyRules (
 - **④ flash judgment** (escalations only): outputs `SAFE` or `RISKY:<category>`
   - `SAFE` → auto-approve
   - Hard-risk categories (`deletion` / `credential` / `remote` / `system` / `bulk`) → **directly human** (must confirm; no counting, no learning)
-  - `neutral` (no hard-risk traits) → **confirmation mode**: first N-1 occurrences go to human, then the threshold state begins
-- **⑤ Learned persistence** (neutral, N=3: confirm twice, then threshold state)
+  - `neutral` (no hard-risk traits) → **confirmation mode**: first N occurrences go to human, then the threshold state begins
+- **⑤ Learned persistence** (neutral, N=3: confirm three times; the 4th occurrence enters the threshold state)
   - Before threshold: every occurrence goes to human; **approve** → count +1 and record an **operation sample** (fingerprint + context); **reject** → upgrade to denyRules
-  - At threshold (count ≥ N-1), three branches:
+  - At threshold (count ≥ N), three branches:
     1. **Fingerprint hit** (this operation is in the confirmed samples) → auto-approve + persist a `{tool, mode, category, contains}` rule
     2. **No fingerprint hit but samples exist** → hand the current operation's context plus the confirmed samples to flash for **third-party similarity verification**: `SAME` (same kind as a confirmed sample) → auto-approve (persist when a fingerprint exists); `DIFFERENT` / verification failure → human
     3. **No samples** → human
@@ -29,11 +29,15 @@ DENY (irreversible keywords) → allowlist (deterministic rules) → denyRules (
 
 ## Install
 
-```sh
-# Option 1: npm (recommended)
-dsh plugin --profile web add dsh-approval-gate
+> **This fork**: use the command below. Upstream `0.5.2` is inert on DSH `0.1.5-rc.2` (see [README](../README.en.md)).
 
-# Option 2: GitHub
+```sh
+dsh plugin --profile web add "github:VanemKrAu/dsh-approval-gate"
+```
+
+If you really need the upstream build (**not recommended** — the gate will not engage):
+
+```sh
 dsh plugin --profile web add "github:moon09300731/dsh-approval-gate#main"
 ```
 
@@ -100,7 +104,7 @@ Data files live under `$DSH_HOME/auto-approve/` (default `~/.dsh/auto-approve/`)
 - `allowRules`: each rule matches on `tool` / `mode` / `category` / `contains` (omitted fields match anything). Learned rules are also written here
 - `denyRules`: written automatically after a human rejection; a hit goes to human (no learning)
 - `hardCategories`: flash `RISKY` in these categories → directly human (no counting, no learning)
-- `riskyThreshold`: neutral confirmation threshold (default 3) — after N-1 human confirmations of the same tool+mode+category, the Nth occurrence auto-approves and persists a rule
+- `riskyThreshold`: neutral confirmation threshold (default 3) — after N human confirmations of the same tool+mode+category, the (N+1)th occurrence auto-approves and persists a rule
 - `judgeTimeoutMs`: single flash judgment timeout (default 20000ms; auto-retries once, then goes to human)
 
 ## Usage
