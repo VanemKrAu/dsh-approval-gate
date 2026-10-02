@@ -115,7 +115,7 @@ dsh plugin --profile web add github:VanemKrAu/dsh-approval-gate
 
 1. **配置权限预设**：在 `~/.dsh/profiles/web/cordis.patch.yml` 添加 `auto-approve` 预设（[详见指南](docs/GUIDE.md#%E5%AE%89%E8%A3%85%E5%90%8E%E5%BF%85%E9%A1%BB%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%9D%83%E9%99%90%E9%A2%84%E8%AE%BE%E5%85%B3%E9%94%AE%E6%AD%A5%E9%AA%A4)）
 2. **重启** DSH（CLI 为 `dsh web`；桌面版退出应用后重新打开）
-3. **选择预设**：会话权限下拉选中「自动审批（Flash）」
+3. **选择预设**：会话权限下拉选中「Auto」
 
 ## 📖 文档
 

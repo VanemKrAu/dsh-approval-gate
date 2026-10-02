@@ -235,8 +235,8 @@ function diffLines(before, after, contextLines) {
 const AUTO_APPROVE_PRESET_YAML = `      auto-approve:
         sandbox: workspace-write
         approval: ask
-        name: 自动审批（Flash）
-        description: Flash 预判写入/命令是否不可回补：安全自动批准，有风险转人工审批。
+        name: Auto
+        description: Auto-approves recoverable writes/commands; risky ones still ask.
 `
 // 无 permission 条目时追加的完整预设块
 const FULL_PERMISSION_BLOCK = `

@@ -118,7 +118,7 @@ dsh plugin --profile web add github:VanemKrAu/dsh-approval-gate
 
 1. **Add the permission preset**: append the `auto-approve` preset to `~/.dsh/profiles/web/cordis.patch.yml` ([see guide](docs/GUIDE.en.md#%E2%9A%A0%EF%B8%8F-manual-permission-preset-required-after-install))
 2. **Restart** DSH (CLI: `dsh web`; desktop app: quit and reopen)
-3. **Select the preset**: choose "Auto Approval (Flash)" in the session's permission dropdown
+3. **Select the preset**: choose "Auto" in the session's permission dropdown
 
 ## 📖 Docs
 
